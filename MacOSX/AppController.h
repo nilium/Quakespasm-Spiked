@@ -42,4 +42,6 @@ extern NSString *FQPrefScreenModeKey;
 
 - (NSArray *)screenModes;
 
++ (NSString *)gameBaseDirectory;
+
 @end

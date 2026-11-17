@@ -30,6 +30,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #endif
 #import "SDLMain.h"
 
+char *OSX_GetBasedir(char *dst, size_t dstsize) {
+    [[AppController gameBaseDirectory] getCString:dst maxLength:(NSUInteger)dstsize encoding:NSUTF8StringEncoding];
+    return dst;
+}
+
 NSString *FQPrefCommandLineKey = @"CommandLine";
 NSString *FQPrefFullscreenKey = @"Fullscreen";
 NSString *FQPrefScreenModeKey = @"ScreenMode";
@@ -170,12 +175,7 @@ NSString *FQPrefScreenModeKey = @"ScreenMode";
     else
         [arguments addArgument:@"-window"];
 
-    NSString *path = [NSString stringWithCString:gArgv[0] encoding:NSASCIIStringEncoding];
-    
-    int i;
-    for (i = 0; i < 4; i++)
-        path = [path stringByDeletingLastPathComponent];
-
+    NSString *path = [[self class] gameBaseDirectory];
     NSFileManager *fileManager = [NSFileManager defaultManager];
     [fileManager changeCurrentDirectoryPath:path];
     
@@ -207,5 +207,8 @@ NSString *FQPrefScreenModeKey = @"ScreenMode";
     [super dealloc];
 }
 
++(NSString *)gameBaseDirectory {
+    return [[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:@"Contents/Resources/game"];
+}
 
 @end

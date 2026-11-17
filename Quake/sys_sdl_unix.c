@@ -289,44 +289,11 @@ static void Sys_GetUserdir (char *dst, size_t dstsize)
 #endif	/* DO_USERDIRS */
 
 #ifdef PLATFORM_OSX
-static char *OSX_StripAppBundle (char *dir)
-{ /* based on the ioquake3 project at icculus.org. */
-	static char	osx_path[MAX_OSPATH];
+extern char *OSX_GetBasedir(char *dst, size_t dstsize);
 
-	q_strlcpy (osx_path, dir, sizeof(osx_path));
-	if (strcmp(basename(osx_path), "MacOS"))
-		return dir;
-	q_strlcpy (osx_path, dirname(osx_path), sizeof(osx_path));
-	if (strcmp(basename(osx_path), "Contents"))
-		return dir;
-	q_strlcpy (osx_path, dirname(osx_path), sizeof(osx_path));
-	if (!strstr(basename(osx_path), ".app"))
-		return dir;
-	q_strlcpy (osx_path, dirname(osx_path), sizeof(osx_path));
-	return osx_path;
-}
-
-static void Sys_GetBasedir (char *argv0, char *dst, size_t dstsize)
+static void Sys_GetBasedir (char *_argv0 __attribute__((unused)), char *dst, size_t dstsize)
 {
-	char	*tmp;
-
-	if (realpath(argv0, dst) == NULL)
-	{
-		perror("realpath");
-		if (getcwd(dst, dstsize - 1) == NULL)
-	_fail:		Sys_Error ("Couldn't determine current directory");
-	}
-	else
-	{
-		/* strip off the binary name */
-		if (! (tmp = strdup (dst))) goto _fail;
-		q_strlcpy (dst, dirname(tmp), dstsize);
-		free (tmp);
-	}
-
-	tmp = OSX_StripAppBundle(dst);
-	if (tmp != dst)
-		q_strlcpy (dst, tmp, dstsize);
+	OSX_GetBasedir(dst, dstsize);
 }
 #else
 static void Sys_GetBasedir (char *argv0, char *dst, size_t dstsize)
