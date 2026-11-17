@@ -59,6 +59,11 @@ typedef unsigned char qbyte;
 	#define NET_EACCES			EACCES
 	#define	NET_EAFNOSUPPORT	EAFNOSUPPORT
 
+	// SOCK_CLOEXEC isn't standard for sockets, so can't use it on Apple systems.
+	#if defined(__APPLE__) && !defined(SOCK_CLOEXEC)
+	#define SOCK_CLOEXEC 0
+	#endif
+
 	#ifndef GNUTLS_STATIC
 		#define GNUTLS_STATIC //hardlink gnutls, instead of dlopening it.
 	#endif
