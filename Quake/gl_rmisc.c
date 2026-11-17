@@ -568,7 +568,7 @@ This must be called if you do anything that could make the cached bindings
 invalid (e.g. manually binding, destroying the context).
 ====================
 */
-void GL_ClearBufferBindings ()
+void GL_ClearBufferBindings (void)
 {
 	if (!gl_vbo_able)
 		return;

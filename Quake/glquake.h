@@ -473,7 +473,7 @@ qboolean RSceneCache_HasSky(void);
 extern byte *skipsubmodels;
 
 void GL_BindBuffer (GLenum target, GLuint buffer);
-void GL_ClearBufferBindings ();
+void GL_ClearBufferBindings (void);
 
 void GLSLGamma_DeleteTexture (void);
 void GLSLGamma_GammaCorrect (void);
