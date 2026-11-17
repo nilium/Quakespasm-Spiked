@@ -1,0 +1,9 @@
+[wrap-file]
+directory = libxmp-4.7.4
+source_url = https://github.com/libxmp/libxmp/releases/download/libxmp-4.7.4/libxmp-4.7.4.tar.gz
+source_filename = libxmp-4.7.4.tar.gz
+source_hash = a25583aa3b031c78ba0b4e83387fa596fb05742622e60f60d1540ee2af79b8d9
+patch_directory = xmp
+
+[provide]
+dependency_names = xmp

@@ -1,0 +1,9 @@
+[wrap-file]
+directory = libmad-486f902c6c686eafced3450851849527e29bc7f6
+source_url = https://github.com/sezero/libmad/archive/486f902c6c686eafced3450851849527e29bc7f6.tar.gz
+source_filename = 486f902c6c686eafced3450851849527e29bc7f6.tar.gz
+source_hash = 0019208ce95cfbc5b7da5156c860ccfb2b3f29250eb51b77364781187a30bfad
+patch_directory = mad
+
+[provide]
+dependency_names = mad

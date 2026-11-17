@@ -1,0 +1,6 @@
+option('exe_name', type : 'string', value : 'quakespasm', description : 'The name of the game executable')
+option('product_name', type : 'string', value : 'Quakespasm-Spiked', description : 'The name of the application (e.g., macOS app bundle, Android app name, and others)')
+option('package_rdns_name', type : 'string', value : 'net.sf.quakespasm.QuakeSpasm', description : 'Reverse-DNS package name')
+option('game_dir', type : 'string', value : 'id1', description : 'The base game directory name')
+option('max_path_len', type : 'integer', min : 32, max : 4096, value : 64, description : 'The max path length accepted by Quakespasm (affects basedir et al and static/stack-allocated paths)')
+option('version_suffix', type : 'string', value : '', description : 'Optional version suffix for builds, like \'-beta1\'')

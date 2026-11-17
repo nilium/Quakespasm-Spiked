@@ -5,19 +5,19 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleExecutable</key>
-	<string>${EXECUTABLE_NAME}</string>
+	<string>@EXECUTABLE_NAME@</string>
 	<key>CFBundleIconFile</key>
 	<string>QuakeSpasm</string>
 	<key>CFBundleIdentifier</key>
-	<string>net.sf.quakespasm.QuakeSpasm</string>
+	<string>@PACKAGE_RDNS_NAME@</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>${PRODUCT_NAME}</string>
+	<string>@PRODUCT_NAME@</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.96.0</string>
+	<string>@VERSION@</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>LSApplicationCategoryType</key>

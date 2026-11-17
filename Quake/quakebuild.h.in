@@ -1,0 +1,16 @@
+#define VERSION               1.09
+#define GLQUAKE_VERSION       1.00
+#define D3DQUAKE_VERSION      0.01
+#define WINQUAKE_VERSION      0.996
+#define LINUX_VERSION         1.30
+#define X11_VERSION           1.10
+
+#define FITZQUAKE_VERSION     0.85 //johnfitz
+#define QUAKESPASM_VERSION    @QUAKESPASM_VERSION_MAJOR@.@QUAKESPASM_VERSION_MINOR@
+#define QUAKESPASM_VER_PATCH  @QUAKESPASM_VERSION_PATCH@ // helper to print a string like 0.94.7
+#ifndef QUAKESPASM_VER_SUFFIX
+#define QUAKESPASM_VER_SUFFIX // optional version suffix string literal like "-beta1", set via build option
+#endif
+
+#define MAX_QPATH             @MAX_PATH_LEN@ // max length of a quake game pathname
+#define GAMENAME              "@GAME_NAME@" // directory to look in by default

@@ -1,0 +1,15 @@
+sources += files(
+  'ice_gnutls.c',
+  'ice_main.c',
+  'ice_mdns.c',
+  'ice_private.h',
+  'ice_quake.c',
+  'ice_quake.h',
+  'ice_sctp.c',
+  'ice_socket.c',
+  'ice_stream.c',
+  'json.c',
+  'md5.c',
+  'sha1.c',
+  'sha2.c',
+)

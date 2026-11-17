@@ -28,22 +28,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #define	QUAKE_GAME		// as opposed to utilities
 
-#define	VERSION			1.09
-#define	GLQUAKE_VERSION		1.00
-#define	D3DQUAKE_VERSION	0.01
-#define	WINQUAKE_VERSION	0.996
-#define	LINUX_VERSION		1.30
-#define	X11_VERSION		1.10
-
-#define	FITZQUAKE_VERSION	0.85	//johnfitz
-#define	QUAKESPASM_VERSION	0.96
-#define	QUAKESPASM_VER_PATCH	0	// helper to print a string like 0.94.7
-#ifndef	QUAKESPASM_VER_SUFFIX
-#define	QUAKESPASM_VER_SUFFIX		// optional version suffix string literal like "-beta1"
-#endif
-
 #define	QS_STRINGIFY_(x)	#x
 #define	QS_STRINGIFY(x)	QS_STRINGIFY_(x)
+
+#include "quakebuild.h"
 
 // combined version string like "0.92.1-beta1"
 #define	QUAKESPASM_VER_STRING	QS_STRINGIFY(QUAKESPASM_VERSION) "." QS_STRINGIFY(QUAKESPASM_VER_PATCH)
@@ -56,8 +44,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #endif
 
 //define	PARANOID			// speed sapping error checking
-
-#define	GAMENAME	"id1"		// directory to look in by default
 
 #define PSET_SCRIPT		//enable the scriptable particle system (poorly ported from FTE)
 #define PSET_SCRIPT_EFFECTINFO	//scripted particle system can load dp's effects
@@ -84,8 +70,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // fall over
 #define	ROLL		2
 
-
-#define	MAX_QPATH	64		// max length of a quake game pathname
 
 #define	ON_EPSILON	0.1		// point on plane side epsilon
 
