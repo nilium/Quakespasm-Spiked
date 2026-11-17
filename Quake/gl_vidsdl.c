@@ -22,18 +22,23 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 // gl_vidsdl.c -- SDL GL vid component
 
+#include "SDL_error.h"
 #include "quakedef.h"
 #include "cfgfile.h"
 #include "bgmusic.h"
 #include "resource.h"
 #if defined(SDL_FRAMEWORK) || defined(NO_SDL_CONFIG)
 #if defined(USE_SDL2)
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #else
 #include <SDL/SDL.h>
 #endif
 #else
 #include "SDL.h"
+#endif
+
+#if !defined(USE_SDL2)
+#define DEFAULT_SDL_FLAGS	SDL_OPENGL
 #endif
 
 //ericw -- for putting the driver into multithreaded mode
@@ -48,8 +53,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define WARP_HEIGHT		200
 #define MAXWIDTH		10000
 #define MAXHEIGHT		10000
-
-#define DEFAULT_SDL_FLAGS	SDL_OPENGL
 
 #define DEFAULT_REFRESHRATE	60
 
