@@ -71,7 +71,6 @@ sources += files(
   'snd_mix.c',
   'snd_mem.c',
 	'snd_sdl.c',
-  'cd_sdl.c', # CD audio
 
   # Input
   'in_sdl.c',
