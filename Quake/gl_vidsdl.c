@@ -602,7 +602,6 @@ static qboolean VID_SetMode (int width, int height, int refreshrate, int bpp, qb
 	temp = scr_disabled_for_loading;
 	scr_disabled_for_loading = true;
 
-	CDAudio_Pause ();
 	BGM_Pause ();
 
 	/* z-buffer depth */
@@ -760,7 +759,6 @@ static qboolean VID_SetMode (int width, int height, int refreshrate, int bpp, qb
 
 	modestate = VID_GetFullscreen() ? MS_FULLSCREEN : MS_WINDOWED;
 
-	CDAudio_Resume ();
 	BGM_Resume ();
 	scr_disabled_for_loading = temp;
 

@@ -285,7 +285,7 @@ void BGM_Play (const char *filename)
 	Con_Printf("Couldn't handle music file %s\n", filename);
 }
 
-void BGM_PlayCDtrack (byte track, qboolean looping)
+void BGM_PlayCDtrack (byte track, qboolean looping __attribute__((unused)))
 {
 /* instead of searching by the order of music_handlers, do so by
  * the order of searchpath priority: the file from the searchpath
@@ -300,8 +300,6 @@ void BGM_PlayCDtrack (byte track, qboolean looping)
 	music_handler_t *handler;
 
 	BGM_Stop();
-	if (CDAudio_Play(track, looping) == 0)
-		return;			/* success */
 
 	if (music_handlers == NULL)
 		return;
