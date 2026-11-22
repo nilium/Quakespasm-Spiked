@@ -209,8 +209,15 @@ exe = executable(
   install : true,
 )
 
-# install_data('assets/pak0.pak', install_dir : pak_dir)
-install_data('quakespasm.pak', install_dir : pak_dir)
+install_data(
+  files(
+    'quakespasm.pak',
+    'progs.lua',
+    'csprogs.lua',
+    'menu.lua',
+  ),
+  install_dir : pak_dir,
+)
 custom_target(
   'pak1',
   command : ['pop.py', '@OUTPUT@'],
