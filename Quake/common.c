@@ -2257,10 +2257,11 @@ void COM_CloseFile (int h)
 
 /*
 ============
-COM_LoadFile
+COM_LoadFile & COM_LoadFileSized
 
 Filename are reletive to the quake directory.
 Allways appends a 0 byte.
+Prefer COM_LoadFileSized for bounds checks.
 ============
 */
 #define	LOADFILE_ZONE		0
@@ -2274,7 +2275,7 @@ static byte	*loadbuf;
 static cache_user_t *loadcache;
 static int	loadsize;
 
-byte *COM_LoadFile (const char *path, int usehunk, unsigned int *path_id)
+byte *COM_LoadFileSized (const char *path, int *len_out, int usehunk, unsigned int *path_id)
 {
 	int		h;
 	byte	*buf;
@@ -2285,8 +2286,11 @@ byte *COM_LoadFile (const char *path, int usehunk, unsigned int *path_id)
 
 // look for it in the filesystem or pack files
 	len = COM_OpenFile (path, &h, path_id);
-	if (h == -1)
+	if (h == -1) {
+		if (len_out)
+			*len_out = 0;
 		return NULL;
+	}
 
 // extract the filename base name for hunk tag
 	COM_FileBase (path, base, sizeof(base));
@@ -2322,11 +2326,19 @@ byte *COM_LoadFile (const char *path, int usehunk, unsigned int *path_id)
 		Sys_Error ("COM_LoadFile: not enough space for %s", path);
 
 	((byte *)buf)[len] = 0;
+	if (len_out)
+		*len_out = len;
 
 	Sys_FileRead (h, buf, len);
 	COM_CloseFile (h);
 
 	return buf;
+}
+
+// Deprecated.
+byte *COM_LoadFile (const char *path, int usehunk, unsigned int *path_id)
+{
+	return COM_LoadFileSized (path, NULL, usehunk, path_id);
 }
 
 byte *COM_LoadHunkFile (const char *path, unsigned int *path_id)
@@ -2365,7 +2377,13 @@ byte *COM_LoadStackFile (const char *path, void *buffer, int bufsize, unsigned i
 // returns malloc'd memory
 byte *COM_LoadMallocFile (const char *path, unsigned int *path_id)
 {
-	return COM_LoadFile (path, LOADFILE_MALLOC, path_id);
+	return COM_LoadFileSized (path, NULL, LOADFILE_MALLOC, path_id);
+}
+
+// returns malloc'd memory
+byte *COM_LoadMallocFileSized (const char *path, int *len_out, unsigned int *path_id)
+{
+	return COM_LoadFileSized (path, len_out, LOADFILE_MALLOC, path_id);
 }
 
 byte *COM_LoadMallocFile_TextMode_OSPath (const char *path, long *len_out)
