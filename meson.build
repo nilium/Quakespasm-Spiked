@@ -5,12 +5,13 @@ project(
   version : '0.96.0',
   default_options : {
     'warning_level' : '3',
-    'c_std' : 'gnu11',
+    'c_std' : 'gnu2y',
   },
 )
 
 cmake = import('cmake')
 
+compiler = meson.get_compiler('c')
 machine = host_machine
 is_darwin = machine.system() == 'darwin'
 is_windows = machine.system() == 'windows'
