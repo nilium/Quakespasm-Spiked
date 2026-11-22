@@ -9,6 +9,8 @@ project(
   },
 )
 
+cmake = import('cmake')
+
 machine = host_machine
 is_darwin = machine.system() == 'darwin'
 is_windows = machine.system() == 'windows'

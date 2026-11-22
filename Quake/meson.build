@@ -1,6 +1,9 @@
 ogg = subproject('ogg')
 vorbis = subproject('vorbis')
 flac = subproject('flac')
+xmp = subproject('xmp')
+mad = subproject('mad')
+
 sdl = subproject(
   'sdl2',
   default_options : {
@@ -32,8 +35,15 @@ sdl = subproject(
     'use_video_offscreen':        'disabled',
   },
 )
-xmp = subproject('xmp')
-mad = subproject('mad')
+
+luau_options = cmake.subproject_options()
+luau_options.add_cmake_defines({
+  'LUAU_BUILD_CLI' : 'OFF',
+  'LUAU_BUILD_TESTS' : 'OFF',
+  'LUAU_BUILD_SHARE' : 'OFF',
+  'LUAU_EXTERN_C' : 'ON',
+})
+luau = cmake.subproject('luau', options : luau_options)
 
 dependencies += [
   dependency('ogg'),
@@ -44,6 +54,8 @@ dependencies += [
   dependency('xmp', fallback : ['xmp', 'libxmp_dep']),
   dependency('mad'),
   dependency('zlib', fallback : 'zlib-ng', default_options: { 'zlib-compat': true }),
+  luau.dependency('Luau.VM'),
+  luau.dependency('Luau.Compiler'),
 ]
 
 if is_unix
@@ -162,6 +174,8 @@ c_args += [
   '-DUSE_CODEC_XMP=1',
   '-DUSE_ZLIB=1',
   '-DNO_SDL_CONFIG=1',
+  '-DLUA_API=extern',
+  '-DLUACODE_API=extern',
 ]
 
 subdir('ice')

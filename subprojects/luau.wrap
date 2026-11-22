@@ -1,0 +1,10 @@
+[wrap-file]
+directory = luau-0.748
+source_url = https://github.com/luau-lang/luau/archive/refs/tags/0.748.tar.gz
+source_filename = 0.748.tar.gz
+source_hash = 810b13d1480a7a2efa66fe356d7e551d2ba3548823a69a4df5a6597f2beb35e5
+method = cmake
+
+[provide]
+Luau.Compiler = Luau.Compiler
+Luau.VM = Luau.VM
