@@ -22,6 +22,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // sv_edict.c -- entity dictionary
 
 #include "quakedef.h"
+#include "strl_fn.h"
+
+#include <lua.h>
+#include <luacode.h>
+#include <lualib.h>
 
 int		type_size[8] = {
 	1,					// ev_void
@@ -1172,6 +1177,8 @@ void PR_ClearProgs(qcvm_t *vm)
 	PR_SwitchQCVM(vm);
 	PR_ShutdownExtensions();
 
+	if (qcvm->luauvm)
+		lua_close(qcvm->luauvm);
 	if (qcvm->knownstrings)
 		Z_Free ((void *)qcvm->knownstrings);
 	free(qcvm->edicts); // ericw -- sv.edicts switched to use malloc()
@@ -1268,6 +1275,101 @@ static void PR_MergeEngineFieldDefs (void)
 	}
 }
 
+static lua_CompileOptions lua_compile_options = {
+	.optimizationLevel = 1,
+	.debugLevel = 1,
+	.typeInfoLevel = 0,
+	.coverageLevel = 0,
+};
+
+qboolean PR_LoadLuaProgs (const char *filename, qboolean fatal)
+{
+	char *      temp;
+	char *      lua_source;
+	int         name_len;
+	int         source_len;
+	size_t      lua_compiled_size;
+	const char *lua_err;
+	char        lua_filename[MAX_QPATH];
+	lua_State * L = qcvm->luauvm;
+
+	qcvm->luauvm = NULL;
+	if (L)
+		lua_close (L);
+
+	COM_StripExtension (filename, lua_filename, MAX_QPATH);
+	name_len = Q_strlen (lua_filename);
+	if (MAX_QPATH - name_len < 6)
+	{
+		// This is more of a "this cannot possibly work" error
+		Host_Error ("cannot load %s Lua variants: paths exceed MAX_QPATH (%d)", filename, (int)MAX_QPATH);
+		return false;
+	}
+
+	q_strlcat (lua_filename, ".lua", MAX_QPATH);
+	lua_source = (char *) COM_LoadMallocFileSized (lua_filename, &source_len, NULL);
+	if (lua_source) // Compile source to bytecode if found
+	{
+		temp = luau_compile ((const char *)lua_source, Q_strlen((const char *)lua_source), &lua_compile_options, &lua_compiled_size);
+		free(lua_source);
+		lua_source = temp;
+		temp = NULL;
+
+		if (!lua_source && fatal)
+			Host_Error ("Failed to compile Lua script %s for %s", lua_filename, filename);
+		else if (!lua_source)
+		{
+			Con_Printf ("Failed to compile Lua script %s for %s", lua_filename, filename);
+			return true; // non-fatal, just don't load anything.
+		}
+	}
+	else // Try to load bytecode
+	{
+		q_strlcat (lua_filename, "c", MAX_QPATH);
+		lua_source = (char *) COM_LoadMallocFileSized (lua_filename, &source_len, NULL);
+		if (lua_source)
+			lua_compiled_size = (size_t) source_len;
+	}
+
+	if (!lua_source && fatal)
+		Host_Error ("Lua script for %s not found", filename);
+	else if (!lua_source)
+	{
+		Con_Printf ("Lua script for %s not found\n", filename);
+		return true; // non-fatal, just don't load anything.
+	}
+
+	L = luaL_newstate ();
+	luaL_openlibs (L);
+	luaL_sandbox (L);
+	
+	// TODO(ncower): load lua/luac file (source > bytecode priority for mods/iteration) into qcvm->luauvm.
+	// TODO(ncower): compute CRC of loaded scripts? no intent to use with multiplayer, but eh.
+	luau_load (L, filename, lua_source, lua_compiled_size, 0);
+
+	free (lua_source);
+	lua_source = NULL;
+
+	lua_pcall (L, 0, 0, 0);
+	if (lua_status (L) != LUA_OK)
+	{
+		
+		lua_err = lua_tolstring (L, -1, NULL);
+		if (!lua_err)
+			lua_err = "unknown error";
+		Con_Printf ("failed loading Lua script %s for %s: %s\n", lua_filename, filename, lua_err);
+		lua_close (L);
+		if (fatal)
+			Host_Error ("fatal error loading Lua script %s for %s", lua_filename, filename);
+		return false;
+	}
+
+	qcvm->luauvm = L;
+	Con_Printf ("Loaded %s Lua script for %s\n", lua_filename, filename);
+
+	return true;
+}
+
 /*
 ===============
 PR_LoadProgs
@@ -1278,6 +1380,9 @@ qboolean PR_LoadProgs (const char *filename, qboolean fatal, unsigned int needcr
 	int			i;
 
 	PR_ClearProgs(qcvm);	//just in case.
+
+	if (!PR_LoadLuaProgs (filename, fatal))
+		Con_Printf("Warning: failed to load Lua for %s; this will become an error later\n", filename);
 
 	qcvm->progs = (dprograms_t *)COM_LoadMallocFile(filename, NULL);
 	if (!qcvm->progs)

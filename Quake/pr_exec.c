@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "quakedef.h"
+#include <lua.h>
 
 static const char *pr_opnames[] =
 {
@@ -353,6 +354,31 @@ The interpretation main loop
 #define OPB ((eval_t *)&qcvm->globals[(unsigned short)st->b])
 #define OPC ((eval_t *)&qcvm->globals[(unsigned short)st->c])
 
+qboolean PR_ExecuteLuaFunc (const char *funcname)
+{
+	int top;
+	if (!qcvm)
+		return false;
+	lua_State *L = qcvm->luauvm;
+	if (!L || !funcname || !*funcname)
+		return false;
+	top = lua_gettop (L); // reset to after post-call
+	lua_getglobal (L, funcname);
+	if (!lua_isfunction (L, -1))
+	{
+		lua_settop(L, top);
+		return false;
+	}
+	// TODO(ncower): pass any args from ExecuteProgram to call (TBD: does ExecuteProgram ever pass args or is it all globals?)
+	// Seems like globals on account of self not being an explicit argument to anything.
+	if (lua_pcall (L, 0, 0, 0))
+	{
+		Con_Printf ("Lua error calling function %s: %s\n", funcname, lua_tolstring (L, -1, NULL));
+	}
+	lua_settop (L, top);
+	return true;
+}
+
 void PR_ExecuteProgram (func_t fnum)
 {
 	eval_t		*ptr;
@@ -370,6 +396,10 @@ void PR_ExecuteProgram (func_t fnum)
 	}
 
 	f = &qcvm->functions[fnum];
+
+	//a Luau global of the same name preempts the QuakeC body.
+	if (PR_ExecuteLuaFunc (PR_GetString (f->s_name)))
+		return;
 
 	//FIXME: if this is a builtin, then we're going to crash.
 
